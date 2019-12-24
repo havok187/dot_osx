@@ -1,0 +1,17 @@
+[user]
+	name = Alex Moiseenko
+	email = alexmoiseenko@yandex-team.ru
+[core]
+	excludesfile = /Users/alexmoiseenko/.global-ignore
+[merge]
+	tool = vimdiff
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
