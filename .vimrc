@@ -1,4 +1,3 @@
-" alex moiseenko config
 
 " Plugins {{{
 	" Load vim plug manager if needed {{{{

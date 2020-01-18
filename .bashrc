@@ -1,36 +1,36 @@
 #!/bin/bash
-# ~/.bashrc
-#
 
 # " ALIASES {{{
 
-	alias cp   ="cp -i"    # confirm before overwriting something
-	alias df   ="df -h"    # human-readable sizes
-	alias free ="free -m"  # show sizes in MB
-	alias la   ="ls -a"
-	alias ll   ="ls -alF"
+	alias cp="cp -i"    # confirm before overwriting something
+	alias df="df -h"    # human-readable sizes
+	alias free="free -m"  # show sizes in MB
+	alias la="ls -a"
+	alias ll="ls -alF"
 
-	alias vi       ="vim"
-	alias home     ="cd ~"
-	alias disk     ="lsblk"
-	alias partner  ='cd ~/Documents/market/partnernode'
-	alias market   ='cd ~/Documents/market'
-	alias projects ="cd ~/Documents/personal/Projects"
-	alias code     ='code-insiders'
-	alias clip     ="xclip -selection clipboard"
-	alias getreqs  ="pipreqs $1"
+	alias vi="vim"
+	alias home="cd ~"
+	alias disk="lsblk"
+	alias partner='cd ~/Documents/market/partnernode'
+	alias market='cd ~/Documents/market'
+	alias projects="cd ~/Documents/personal/Projects"
+	alias code='code-insiders'
+	alias clip="xclip -selection clipboard"
+	alias getreqs="pipreqs $1"
 
-	alias run:autotest ='partner && export DEBUG=1 && make autotest'
-	alias run:selenium ='partner & make selenium-with-watch'
-	alias node:work    ='nvm use 8.9.4'
-	alias node:enjoy   ='nvm use 12.14'
+	alias run:autotest='partner && export DEBUG=1 && make autotest'
+	alias run:kdvrtests='parnter && export kadavr_host="logrus01ed.market.yandex.net"; export kadavr_port="1337"; make autotest'
+	alias run:selenium='partner & make selenium-with-watch'
+	alias node:work='nvm use 8.9.4'
+	alias node:enjoy='nvm use 12.14'
 
-	alias connect:vd1  ='ssh market.logrus01vd.yandex.ru'
-	alias connect:vd2  ='ssh market.logrus02vd.yandex.ru'
-	alias connect:ed   ='ssh market.logrus01ed.yandex.ru'
-	alias connect:hd   ='ssh market.logrus01hd.yandex.ru'
+	alias connect:vd1='ssh market.logrus01vd.yandex.ru'
+	alias connect:vd2='ssh market.logrus02vd.yandex.ru'
+	alias connect:ed='ssh market.logrus01ed.yandex.ru'
+	alias connect:hd='ssh market.logrus01hd.yandex.ru'
+	alias connect='echo vd1 vd2 ed hd'
 
-	alias update:shell  ='source ~/.bashrc'
+	alias update:shell='source ~/.bashrc'
 	alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 	alias settings:shell="vim ~/.bashrc"
@@ -67,19 +67,19 @@
 		fi
 	}
 
-	function webpackP {
-		cd ~/Documents/market/partnernode && npm start --pages=legacy-generic,manager-partner-list,partner-list,register,order,organization-info,$@
+	webpackP () {
+		cd ~/Documents/market/partnernode && npm start --pages=legacy-generic,manager-partner-list,partner-list,register,dashboard,organization-info,$@
 	}
 
-	function monitor {
+	monitor () {
 		xrandr --output DP1-1 --auto --above eDP1 && xrandr --output DP1-3 --auto --right-of DP1-1
 	}
 
-	function run:kdvrtst {
+	run:kdvrtst (){
 		export KADAVR=1; export kadavr_port='8800'; export kadavr_host='market.logrus01ed.yandex.ru';  make autotest
 	}
 
-	function colors {
+	colors () {
 		local fgc bgc vals seq0
 
 		printf "Color escapes are %s\n" '\e[${value};...;${value}m'
@@ -160,9 +160,7 @@
 	export EDITOR=vim;
 # "}}}
 # " EXEC BEFORE START {{{
-	# see https://wiki.archlinux.org/index.php/SSH_keys#Keychain
-	# eval $(keychain --eval --quiet --agents ssh id_rsa) # [linux]
-	eval $(ssh-add -K ~/.ssh/id_rsa) # [osx]
+	eval "$(ssh-add -K ~/.ssh/id_rsa &>/dev/null)"
 
 	# Functions 
 
