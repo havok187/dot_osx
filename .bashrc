@@ -1,244 +1,66 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# " ALIASES {{{
+# set 256 color profile where possible
+if [[ $COLORTERM == gnome-* && $TERM == xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+	export TERM=gnome-256color
+elif infocmp xterm-256color >/dev/null 2>&1; then
+	export TERM=xterm-256color
+fi
 
-	alias cp="cp -i"    # confirm before overwriting something
-	alias df="df -h"    # human-readable sizes
-	alias free="free -m"  # show sizes in MB
-	alias la="ls -a"
-	alias ll="ls -alF"
+# Add tab completion for many Bash commands
+if which brew &>/dev/null && [ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]; then
+	# Ensure existing Homebrew v1 completions continue to work
+	export BASH_COMPLETION_COMPAT_DIR="$(brew --prefix)/etc/bash_completion.d"
+	source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+elif [ -f /etc/bash_completion ]; then
+	source /etc/bash_completion
+fi
 
-	alias vi="vim"
-	alias home="cd ~"
-	alias disk="lsblk"
-	alias partner='cd ~/Documents/market/partnernode'
-	alias market='cd ~/Documents/market'
-	alias projects="cd ~/Documents/personal/Projects"
-	alias code='code-insiders'
-	alias clip="xclip -selection clipboard"
-	alias getreqs="pipreqs $1"
+# ssh key chain
+eval "$(ssh-add -K ~/.ssh/id_rsa &>/dev/null)"
 
-	alias run:autotest='partner && export DEBUG=1 && make autotest'
-	alias run:kdvrtests='parnter && export kadavr_host="logrus01ed.market.yandex.net"; export kadavr_port="1337"; make autotest'
-	alias run:selenium='partner & make selenium-with-watch'
-	alias node:work='nvm use 8.9.4'
-	alias node:enjoy='nvm use 12.14'
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell
 
-	alias connect:vd1='ssh market.logrus01vd.yandex.ru'
-	alias connect:vd2='ssh market.logrus02vd.yandex.ru'
-	alias connect:ed='ssh market.logrus01ed.yandex.ru'
-	alias connect:hd='ssh market.logrus01hd.yandex.ru'
-	alias connect='echo vd1 vd2 ed hd'
+# Check the window size after each command and, if necessary, update the values
+# of LINES and COLUMNS.
+shopt -s checkwinsize
 
-	alias update:shell='source ~/.bashrc'
-	alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+# Append to the Bash history file, rather than overwriting it
+shopt -s histappend
 
-	alias settings:shell="vim ~/.bashrc"
-	alias settings:ginny="vim ~/.ginny.conf.js"
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob
 
-	alias g:lb="git log --graph --pretty=format:'%Cblue%ad%Creset -%C(yellow)%d%Creset %h %s %C(bold blue)<%an>%Creset'"
-	alias g:lm="git log --oneline --author=\"Alex Moiseenko\""
+# Load the shell dotfiles, and then some:
+load_dotfiles() {
+	declare -a files=(
+		$HOME/shell/theming # Custom bash prompt and colorful commands
+		$HOME/shell/aliases # Aliases
+		$HOME/shell/func    # Functions
+		$HOME/shell/local   # Local and private settings not under version control
+	)
 
-	alias g:db="git branch -D $1"
-	alias g:sb="git branch"
-	alias g:cb="git checkout -b $1"
-# }}}
-# " FUNCTIONS {{{
-	g:cl() {
-		echo `git branch --list`
-		echo "chose by ticket number"
-		read $ticket
-		branch=`git branch --list | grep $ticket`
-		eval "git checkout $branch"
-	}
-
-	g:sq() {
-		if [[ "$1" == "n" ]]; then
-			eval "git rebase HEAD~$2 --interactive --autosquash -s recursive -X theirs";
-
-		elif [[ "$1" == "h" ]]; then
-			eval "git rebase $2 --interactive --autosquash -s recursive -X theris";
-
-		else
-			echo "specify the arguments"
-			echo "sqash method params"
-			echo "method-- n - by commits from head, h - by commit hash"
-			echo "parameter numberber of comments | commit hash"
+	# if these files are readable, source them
+	for index in ${!files[*]}; do
+		if [[ -r ${files[$index]} ]]; then
+			source ${files[$index]}
 		fi
-	}
+	done
+}
 
-	webpackP () {
-		cd ~/Documents/market/partnernode && npm start --pages=legacy-generic,manager-partner-list,partner-list,register,dashboard,organization-info,$@
-	}
+load_dotfiles
+unset load_dotfiles
 
-	monitor () {
-		xrandr --output DP1-1 --auto --above eDP1 && xrandr --output DP1-3 --auto --right-of DP1-1
-	}
+# Exports
 
-	run:kdvrtst (){
-		export KADAVR=1; export kadavr_port='8800'; export kadavr_host='market.logrus01ed.yandex.ru';  make autotest
-	}
+# node version manager
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
-	colors () {
-		local fgc bgc vals seq0
-
-		printf "Color escapes are %s\n" '\e[${value};...;${value}m'
-		printf "Values 30..37 are \e[33mforeground colors\e[m\n"
-		printf "Values 40..47 are \e[43mbackground colors\e[m\n"
-		printf "Value  1 gives a  \e[1mbold-faced look\e[m\n\n"
-
-		# foreground colors
-		for fgc in {30..37}; do
-			# background colors
-			for bgc in {40..47}; do
-				fgc=${fgc#37} # white
-				bgc=${bgc#40} # black
-
-				vals="${fgc:+$fgc;}${bgc}"
-				vals=${vals%%;}
-
-				seq0="${vals:+\e[${vals}m}"
-				printf "  %-9s" "${seq0:-(default)}"
-				printf " ${seq0}TEXT\e[m"
-				printf " \e[${vals:+${vals+$vals;}}1mBOLD\e[m"
-			done
-			echo; echo
-		done
-	}
-
-	# # ex - archive extractor
-	# # usage: ex <file>
-	ex ()
-	{
-	  if [ -f $1 ] ; then
-	    case $1 in
-	      *.tar.xz)    tar xf $1    ;;
-	      *.tar.bz2)   tar xjf $1   ;;
-	      *.tar.gz)    tar xzf $1   ;;
-	      *.bz2)       bunzip2 $1   ;;
-	      *.rar)       unrar x $1   ;;
-	      *.gz)        gunzip $1    ;;
-	      *.tar)       tar xf $1    ;;
-	      *.tbz2)      tar xjf $1   ;;
-	      *.tgz)       tar xzf $1   ;;
-	      *.zip)       unzip $1     ;;
-	      *.Z)         uncompress $1;;
-	      *.7z)        7z x $1      ;;
-	      *)           echo "'$1' cannot be extracted via ex()" ;;
-	    esac
-	  else
-	    echo "'$1' is not a valid file"
-	  fi
-	}
-# " }}}
-# " EXPORTS {{{
-	# Parnter node testing config
-	export GINNY_USER_CONFIG_PATH="$HOME/.ginny.conf.js"
-
-	# Manual colors
-	export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
-	export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
-	export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
-	export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
-	export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
-	export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
-	export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
-
-	# better yaourt colors
-	export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1;41;5:votes=1;44:dsc=0:other=1;35"
-
-	# node version manager
-	export NVM_DIR="$HOME/.nvm"
-	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-	# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-	export PATH="$PATH:$HOME/.rvm/bin"
-
-	# vim evryware
-	export VISUAL=vim;
-	export EDITOR=vim;
-# "}}}
-# " EXEC BEFORE START {{{
-	eval "$(ssh-add -K ~/.ssh/id_rsa &>/dev/null)"
-
-	# Functions 
-
-
-	[ -r /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
-
-	# Change the window title of X terminals
-	case ${TERM} in
-		xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|interix|konsole*)
-			PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
-			;;
-		screen*)
-			PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
-			;;
-	esac
-
-	use_color=true
-
-	# Set colorful PS1 only on colorful terminals.
-	# dircolors --print-database uses its own built-in database
-	# instead of using /etc/DIR_COLORS.  Try to use the external file
-	# first to take advantage of user additions.  Use internal bash
-	# globbing instead of external grep binary.
-
-	safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-	match_lhs=""
-
-	[[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
-	[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
-	[[ -z ${match_lhs}    ]] \
-		&& type -P dircolors >/dev/null \
-		&& match_lhs=$(dircolors --print-database)
-	[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
-
-	if ${use_color} ; then
-		# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-		if type -P dircolors >/dev/null ; then
-			if [[ -f ~/.dir_colors ]] ; then
-				eval $(dircolors -b ~/.dir_colors)
-			elif [[ -f /etc/DIR_COLORS ]] ; then
-				eval $(dircolors -b /etc/DIR_COLORS)
-			fi
-		fi
-
-		if [[ ${EUID} == 0 ]] ; then
-			PS1='\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] '
-		else
-			PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
-		fi
-
-		# alias ls='ls --color=auto'
-		# alias grep='grep --colour=auto'
-		# alias egrep='egrep --colour=auto'
-		# alias fgrep='fgrep --colour=auto'
-	else
-		if [[ ${EUID} == 0 ]] ; then
-			# show root@ when we don't have colors
-			PS1='\u@\h \W \$ '
-		else
-			PS1='\u@\h \w \$ '
-		fi
-	fi
-
-	unset use_color safe_term match_lhs sh
-
-	complete -cf sudo
-
-	# Bash won't get SIGWINCH if another process is in the foreground.
-	# Enable checkwinsize so that bash will check the terminal size when
-	# it regains control.  #65623
-	# http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
-	shopt -s checkwinsize
-
-	shopt -s expand_aliases
-
-	# export QT_SELECT=4
-
-	# Enable history appending instead of overwriting.  #139609
-	shopt -s histappend
-# " }}}
-
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+# vim evryware
+export VISUAL=vim
+export EDITOR=vim

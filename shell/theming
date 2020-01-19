@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+# to know more about colors
+# https://misc.flogisoft.com/bash/tip_colors_and_formatting
+
+# Manual page theming
+export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
+export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
+export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
+export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+
+# Enable commands color output
+export CLICOLOR=1
+export LSCOLORS="Gxfxcxdxbxegedabagacad"
+
+# Prompt
+# Set colorful PS1 adn PS2 only on colorful terminals.
+
+bold=''
+reset="\e[0m"
+black="\e[1;30m"
+blue="\e[1;34m"
+cyan="\e[1;36m"
+green="\e[1;32m"
+orange="\e[1;33m"
+purple="\e[1;35m"
+red="\e[1;31m"
+violet="\e[1;35m"
+white="\e[1;37m"
+yellow="\e[1;33m"
+
+# Add "$" symbol before host when logged in as root.
+if [[ "${USER}" == "root" || ${EUID} == 0 ]]; then
+    sudo_mark="\$"
+else
+    sudo_mark="ƒ"
+fi
+
+# exmple:  ƒ | username | curretfolder ::
+PS1="\[${white}\]${sudo_mark}"       # sudo marker
+PS1+="\[${white}\] | "               # delimeter
+PS1+="\[${yellow}\]\h"               # host name
+PS1+="\[${white}\] | "               # delimetr
+PS1+="\[${yellow}\]\W"               # folder name
+PS1+="\[${white}\] :: \[${reset}\]"; # "::"(and reset color)
+export PS1
+
+PS2="\[${yellow}\]→ \[${reset}\]";
+export PS2;
