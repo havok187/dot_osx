@@ -9,9 +9,11 @@
 
 	" }}}
 	call plug#begin('~/.vim/plugged')
-	Plug 'arcticicestudio/nord-vim'     " scheme
+	Plug 'nanotech/jellybeans.vim'      " theme
+	Plug 'arcticicestudio/nord-vim'     " theme
+	Plug 'chriskempson/base16-vim'      " themes 
 	Plug 'chrisbra/Colorizer'           " color preview
-	Plug 'chriskempson/base16-vim'      " synax
+	Plug 'itchyny/lightline.vim'        " status bar
 	Plug 'pangloss/vim-javascript'      " *.js
 	Plug 'leafgarland/typescript-vim'   " *.ts
 	Plug 'HerringtonDarkholme/yats.vim' " *.ts
@@ -25,27 +27,40 @@
 " }}}
 
 " Visual {{{
-	syntax enable                    " enable syntax processing
-	set t_Co=256                     " enable 256 colors
-	set background=dark              " set dark theme
-	set number relativenumber        " show line numbers
-	let g:javascript_plugin_flow=1   " enable syntax for Flow
-	let g:javascript_plugin_jsdoc=1  " enable syntax for @jsdoc
-	
-	if has('termguicolors')          " enable true colors support
-	  set termguicolors
-	endif
+	" Colors {{{
+		syntax enable                    " enable syntax processing
+		set t_Co=256                     " enable 256 colors
+		set background=dark              " set dark theme
+		set number relativenumber        " show line numbers
+		let g:javascript_plugin_flow=1   " enable syntax for Flow
+		let g:javascript_plugin_jsdoc=1  " enable syntax for @jsdoc
+		
+		if has('gui_running')            " setup font family:size
+			set guifont =VictorMono-SemiBold:h13
+		endif
 
-	if has('gui_running')            " setup font family:size
-		set guifont =VictorMono-SemiBold:h13
-	endif
+		if (has("termguicolors"))        " enable true colors support
+			 set termguicolors
+		endif
 
-	colorscheme nord 
+		colorscheme nord 
 
-	" Trasparent backgourd
-	" hi! Normal ctermbg=NONE guibg=NONE
-	" hi! NonText ctermbg=NONE guibg=NONE
+	" }}}
+	" Light Line {{{ 
+		set laststatus=2  " Display Light line
+		set noshowmode    " Hide default status bar
 
+		let g:lightline = {
+		      \ 'colorscheme': 'nord',
+		      \ 'active': {
+		      \   'left': [ [ 'mode', 'paste' ],
+		      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+		      \ },
+		      \ 'component_function': {
+		      \   'gitbranch': 'fugitive#head'
+		      \ },
+		      \ }
+	" }}}
 	" Folding {{{
 		set foldmethod=marker " fold based on indent level
 		set foldnestmax=10    " max 10 depth

@@ -38,9 +38,11 @@ alias df="df -h"
 # lazy ass
 alias vi="vim"
 alias code='code-insiders'
+# dotfiles git
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # copy stdout to clipboard
-alias clip="xclip -selection clipboard"
+alias code_extenstions="code --list-extensions | xargs -L 1 echo code --install-extension | pbcopy"
 
 alias node:work='nvm use 8.9.4'
 alias node:enjoy='nvm use 12.14'
