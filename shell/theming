@@ -39,10 +39,12 @@ else
     sudo_mark="ƒ"
 fi
 
-# exmple:  ƒ | username | curretfolder ::
+# exmple:  ƒ | username | tabname | curretfolder ::
 PS1="\[${white}\]${sudo_mark}"       # sudo marker
 PS1+="\[${white}\] | "               # delimeter
 PS1+="\[${yellow}\]\h"               # host name
+PS1+="\[${white}\] | "               # delimetr
+PS1+="\[${yellow}\]${TAB}"           # tabname
 PS1+="\[${white}\] | "               # delimetr
 PS1+="\[${yellow}\]\W"               # folder name
 PS1+="\[${white}\] :: \[${reset}\]"; # "::"(and reset color)

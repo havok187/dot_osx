@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# git auto squash
 g:sq() {
 	if [[ "$1" == "n" ]]; then
 		eval "git rebase HEAD~$2 --interactive --autosquash -s recursive -X theirs"
@@ -13,6 +13,24 @@ g:sq() {
 		echo "method-- n - by commits from head, h - by commit hash"
 		echo "parameter numberber of comments | commit hash"
 	fi
+}
+
+listening() {
+    if [ $# -eq 0 ]; then
+        sudo lsof -iTCP -sTCP:LISTEN -n -P
+    elif [ $# -eq 1 ]; then
+        sudo lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color $1
+    else
+        echo "Usage: listening [pattern]"
+    fi
+}
+
+orelse() {
+    ps xco pid=,command= | grep -i $1 | awk '{print $1}' | xargs kill -9
+}
+
+cman() {
+    man $@
 }
 
 # # ex - archive extractor

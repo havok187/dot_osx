@@ -11,7 +11,15 @@
 	branch = auto
 	interactive = auto
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge --skip %f
+	process = git-lfs filter-process --skip
+    required = true
+
+[includeIf "gitdir:~/Documents/personal/"]
+    path = ~/.personal_gitconfig
+
+[push]
+	default = current
+[lfs "https://github.yandex-team.ru/"]
+	locksverify = false

@@ -6,6 +6,10 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias home="cd ~"
 alias projects="cd ~/Documents/personal/Projects"
+alias courses="cd ~/Documents/personal/Courses"
+
+# delete all local branches 
+alias gcb="git branch | grep -v "master" | xargs git branch -D"
 
 # IP addresses
 alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
@@ -35,14 +39,10 @@ alias cp="cp -i"
 # list mounted disks with  human-readable sizes
 alias df="df -h" 
 
-# lazy ass
-alias vi="vim"
-alias code='code-insiders'
+alias vim="nvim"
 # dotfiles git
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # copy stdout to clipboard
 alias code_extenstions="code --list-extensions | xargs -L 1 echo code --install-extension | pbcopy"
 
-alias node:work='nvm use 8.9.4'
-alias node:enjoy='nvm use 12.14'

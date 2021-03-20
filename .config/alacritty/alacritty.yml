@@ -1,45 +1,47 @@
 env:
-        LC_ALL: "ru_RU.UTF-8"
-        TERM: "xterm-256color"
+    COLORTERM: "truecolor"
+    TERM: "screen-256color"
 
 window:
-        padding:
-                x: 8
-                y: 24
+    opacity: 1
+    padding:
+        x: 8
+        y: 24
 
-        decorations: 'transparent'
+    decorations: 'transparent'
 
 font:
-        normal:
-                family: 'VictorMono' 
+    normal:
+        family: 'VictorMono' 
 
+background_opacity: 1 
 
 # Colors (Nord)
-colors:
-   # Default colors
-   primary:
-     background: '0x2E3440'
-     foreground: '0xD8DEE9'
-
-   # Normal colors
-   normal:
-     black:   '0x3B4252'
-     red:     '0xBF616A'
-     green:   '0xA3BE8C'
-     yellow:  '0xEBCB8B'
-     blue:    '0x81A1C1'
-     magenta: '0xB48EAD'
-     cyan:    '0x88C0D0'
-     white:   '0xE5E9F0'
-
-   # Bright colors
-   bright:
-     black:   '0x4C566A'
-     red:     '0xBF616A'
-     green:   '0xA3BE8C'
-     yellow:  '0xEBCB8B'
-     blue:    '0x81A1C1'
-     magenta: '0xB48EAD'
-     cyan:    '0x8FBCBB'
-     white:   '0xECEFF4'
+# colors:
+#    # Default colors
+#    primary:
+#      background: '0x2E3440'
+#      foreground: '0xD8DEE9'
+# 
+#    # Normal colors
+#    normal:
+#      black:   '0x3B4252'
+#      red:     '0xBF616A'
+#      green:   '0xA3BE8C'
+#      yellow:  '0xEBCB8B'
+#      blue:    '0x81A1C1'
+#      magenta: '0xB48EAD'
+#      cyan:    '0x88C0D0'
+#      white:   '0xE5E9F0'
+# 
+#    # Bright colors
+#    bright:
+#      black:   '0x4C566A'
+#      red:     '0xBF616A'
+#      green:   '0xA3BE8C'
+#      yellow:  '0xEBCB8B'
+#      blue:    '0x81A1C1'
+#      magenta: '0xB48EAD'
+#      cyan:    '0x8FBCBB'
+#      white:   '0xECEFF4'
 
